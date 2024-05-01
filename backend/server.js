@@ -9,8 +9,12 @@ import messageRoutes from "./routes/message.routes.js" ;
 import userRoutes from "./routes/user.routes.js" ;
 
 import connectToMongoDB from "./db/connecttoMONGODB.js";
+import cors from 'cors';
+
 
 const app = express() ;
+app.use(cors()) ;
+
 const PORT = process.env.PORT||8005 ; 
 
 dotenv.config() ;
