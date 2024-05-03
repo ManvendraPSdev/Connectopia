@@ -1,6 +1,7 @@
 import mongoose from 'mongoose' ;
 
 const conversationSchema = new mongoose.Schema({
+    // Corrected the Spelling
     participants:[
         {
             type: mongoose.Schema.Types.ObjectId ,
