@@ -1,39 +1,38 @@
-import {Server} from 'socket.io' ;
-import http from 'http' 
-import express from 'express' ;
+import { Server } from 'socket.io';
+import http from 'http';
+import express from 'express';
 
-const app = express() ;
+const app = express();
 
-const server = http.createServer(app) ;
-const io = new Server(server , {
-	cors :{
-		origin :["http://localhost:5173"],
-		mthods : ["GET" , "POST"]
-	}
-}) ;
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: ["http://localhost:5173"],
+        methods: ["GET", "POST"]
+    }
+});
 
-export const getReceiverSocketId = (receiverId) =>{
-	return userSocketMap[receiverId] ;	
+export const getReceiverSocketId = (receiverId) => {
+    return userSocketMap[receiverId];
 }
 
 const userSocketMap = {}; // {userId:socketId}
-io.on("connection", (socket)=>{
-	console.log("a user Connected", socket.id);
+io.on("connection", (socket) => {
+    console.log("a user Connected", socket.id);
 
-	const userId = socket.handshake.query.userId
-	if(userId!="undefined") userSocketMap[userId] = socket.id ;
+    const userId = socket.handshake.query.userId
+    if (userId !== "undefined") userSocketMap[userId] = socket.id;
 
-	// io.emmit() is used to send events to all the connected Clients
-	io.emmit("getOnlineUsers" , Object.keys(userSocketMap)) ;
+    // io.emit() is used to send events to all the connected Clients
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-// socket.on() is used to listened the events , can be used on both Client Side and Server Side
-	socket.on("disconnect" , () =>{
-		console.log("user disconnected", socket.id) ;
-		// Once User Disconnected then the id of the user will get deleted 
-		delete userSocketMap[userId];
-		io.emmit("getOnlineUsers" , Object.keys(userSocketMap)) ;
+    // socket.on() is used to listen to the events, can be used on both Client Side and Server Side
+    socket.on("disconnect", () => {
+        console.log("user disconnected", socket.id);
+        // Once User Disconnected then the id of the user will get deleted
+        delete userSocketMap[userId];
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    });
+});
 
-	})
-})
-
-export {app , io , server} ;
+export { app, io, server };
